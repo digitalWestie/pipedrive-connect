@@ -13,8 +13,10 @@ module Pipedrive
           false
         end
 
-        def api_version
-          supports_v2_api? ? Pipedrive.api_version : :v1
+        def api_version_for(endpoint = nil)
+          return :v1 unless supports_v2_api?
+          return :v1 if endpoint&.end_with?("Fields")
+          Pipedrive.api_version
         end
 
         def request(method, url, params = {})
@@ -24,7 +26,9 @@ module Pipedrive
 
           Util.debug "#{name} #{method.upcase} #{url}"
 
-          response = api_client.send(method) do |req|
+          version = api_version_for(url)
+
+          response = api_client(version).send(method) do |req|
             req.url url
             req.params = { api_token: Pipedrive.api_key }
             if %i[post put patch].include?(method)
@@ -37,9 +41,10 @@ module Pipedrive
           Util.serialize_response(response)
         end
 
-        def api_client
-          @api_client = Faraday.new(
-            url: "#{BASE_URL}/#{api_version}",
+        def api_client(version = nil)
+          version ||= api_version_for
+          Faraday.new(
+            url: "#{BASE_URL}/#{version}",
             headers: { "Content-Type": "application/json" }
           ) do |faraday|
             if Pipedrive.debug_http

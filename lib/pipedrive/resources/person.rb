@@ -7,5 +7,9 @@ module Pipedrive
 
     has_many :deals, class_name: "Deal"
     has_many :activities, class_name: "Activity"
+
+    def self.supports_v2_api?
+      true
+    end
   end
 end
