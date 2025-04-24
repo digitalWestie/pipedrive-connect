@@ -9,7 +9,7 @@ module Pipedrive
     has_many :participants, class_name: "Participant"
 
     def self.supports_v2_api?
-      false
+      true
     end
   end
 end
