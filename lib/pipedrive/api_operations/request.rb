@@ -36,7 +36,7 @@ module Pipedrive
           Util.debug "#{name} #{method.upcase} #{url}"
 
           client = api_client
-          client.url = client.url.gsub("v2", "v1") if endpoint.end_with?("Fields") # hack to allow Person endpoint to use v2 while fields is still in v1
+          client.url = client.url.gsub("v2", "v1") if url.end_with?("Fields") # hack to allow Person endpoint to use v2 while fields is still in v1
           response = client.send(method) do |req|
             req.url url
             req.params = { api_token: Pipedrive.api_key }
