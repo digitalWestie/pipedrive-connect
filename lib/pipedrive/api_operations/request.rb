@@ -24,8 +24,10 @@ module Pipedrive
           "api/#{api_version}"
         end
 
-        def api_base_url
-          "#{BASE_URL}/#{api_version_prefix}"
+        def api_base_url(endpoint_url=nil)
+          result = "#{BASE_URL}/#{api_version_prefix}"
+          result.gsub!("v2", "v1") if endpoint_url.end_with?("Fields") # hack to allow Person endpoint to use v2 while fields is still in v1
+          result
         end
 
         def request(method, url, params = {})
@@ -35,9 +37,7 @@ module Pipedrive
 
           Util.debug "#{name} #{method.upcase} #{url}"
 
-          client = api_client
-          client.url = client.url.gsub("v2", "v1") if url.end_with?("Fields") # hack to allow Person endpoint to use v2 while fields is still in v1
-          response = client.send(method) do |req|
+          response = api_client(url).send(method) do |req|
             req.url url
             req.params = { api_token: Pipedrive.api_key }
             if %i[post put patch].include?(method)
@@ -50,9 +50,9 @@ module Pipedrive
           Util.serialize_response(response)
         end
 
-        def api_client
+        def api_client(endpoint_url)
           @api_client = Faraday.new(
-            url: api_base_url,
+            url: api_base_url(endpoint_url),
             headers: { "Content-Type": "application/json" }
           ) do |faraday|
             if Pipedrive.debug_http
