@@ -11,5 +11,12 @@ module Pipedrive
     def self.supports_v2_api?
       true
     end
+
+    def organization_id
+      # Handle both search and retrieve response formats
+      id = @data.fetch(:organization, {}).fetch(:id, nil)
+      id = @data.fetch(:org_id, nil) if id.nil?
+      id
+    end
   end
 end
