@@ -13,10 +13,8 @@ module Pipedrive
           false
         end
 
-        def api_version_for(endpoint = nil)
-          return :v1 unless supports_v2_api?
-          return :v1 if endpoint&.end_with?("Fields")
-          Pipedrive.api_version
+        def api_version
+          supports_v2_api? ? Pipedrive.api_version : :v1
         end
 
         def api_version_prefix
@@ -37,9 +35,9 @@ module Pipedrive
 
           Util.debug "#{name} #{method.upcase} #{url}"
 
-          version = api_version_for(url)
-
-          response = api_client(version).send(method) do |req|
+          client = api_client
+          client.url = client.url.gsub("v2", "v1") if endpoint.end_with?("Fields") # hack to allow Person endpoint to use v2 while fields is still in v1
+          response = client.send(method) do |req|
             req.url url
             req.params = { api_token: Pipedrive.api_key }
             if %i[post put patch].include?(method)
