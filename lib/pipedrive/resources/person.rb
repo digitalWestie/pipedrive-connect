@@ -11,5 +11,21 @@ module Pipedrive
     def self.supports_v2_api?
       true
     end
+
+    def phone_numbers
+      if respond_to? :phone
+        phone
+      else
+        phones.map { |p| p[:value] }
+      end
+    end
+
+    def email_addresses
+      if respond_to? :email
+        email
+      else
+        emails.map { |e| e[:value] }
+      end
+    end
   end
 end
