@@ -12,6 +12,15 @@ module Pipedrive
       true
     end
 
+    def organization_id
+      # Handle both search and retrieve response formats
+      if @data.has_key? :org_id
+        @data.dig(:org_id)
+      else
+        @data.dig(:organization, :id)
+      end
+    end
+
     def phone_numbers
       if respond_to? :phone
         phone
