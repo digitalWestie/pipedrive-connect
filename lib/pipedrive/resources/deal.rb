@@ -18,5 +18,12 @@ module Pipedrive
       id = @data.fetch(:org_id, nil) if id.nil?
       id
     end
+
+    def person_id
+      # Handle both search and retrieve response formats
+      id = @data.fetch(:person, {}).fetch(:id, nil)
+      id = @data.fetch(:person_id, nil) if id.nil?
+      id
+    end
   end
 end
