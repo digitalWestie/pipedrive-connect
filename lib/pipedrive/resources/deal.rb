@@ -14,15 +14,15 @@ module Pipedrive
 
     def organization_id
       # Handle both search and retrieve response formats
-      id = @data.fetch(:organization, {}).fetch(:id, nil)
-      id = @data.fetch(:org_id, nil) if id.nil?
+      id = @data.dig(:organization, :id)
+      id = @data.dig(:org_id) if id.nil?
       id
     end
 
     def person_id
       # Handle both search and retrieve response formats
-      id = @data.fetch(:person, {}).fetch(:id, nil)
-      id = @data.fetch(:person_id, nil) if id.nil?
+      id = @data.dig(:person, :id)
+      id = @data.dig(:person_id) if id.nil?
       id
     end
   end
