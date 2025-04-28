@@ -16,7 +16,7 @@ module Pipedrive
       if respond_to? :phone
         phone
       else
-        phones.map { |p| p[:value] }
+        phones.map { |p| p.is_a?(Hash) ? p[:value] : p }
       end
     end
 
@@ -24,7 +24,7 @@ module Pipedrive
       if respond_to? :email
         email
       else
-        emails.map { |e| e[:value] }
+        emails.map { |e| e.is_a?(Hash) ? e[:value] : e }
       end
     end
   end
